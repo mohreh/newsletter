@@ -1,10 +1,35 @@
 [package]
-name = "email_newsletter"
+name = "newsletter"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+path = "src/lib/mod.rs"
+
+[[bin]]
+path = "src/bin/main.rs"
+name = "newsletter"
 
 [dependencies]
 actix-web = "4.3.1"
+serde = { version = "1.0.159", features = ["derive"] }
 tokio = { version = "1.27.0", features = ["macros", "rt-multi-thread"] }
+config = "0.13.3"
+uuid = { version = "1.3.0", features = ["v4"] }
+chrono = "0.4.24"
+
+[dependencies.sqlx]
+version = "0.6.3"
+default-features = false
+features = [
+  "runtime-actix-rustls",
+  "macros",
+  "postgres",
+  "uuid",
+  "chrono",
+  "migrate"
+]
+
+[dev-dependencies]
+reqwest = "0.11.16"
