@@ -9,7 +9,7 @@ use sqlx::PgPool;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let subscriber = get_subscriber("newsletter".into(), "info".into());
+    let subscriber = get_subscriber("newsletter".into(), "info".into(), std::io::stdout);
     init_subscriber(subscriber);
 
     // refactor database stuff later
