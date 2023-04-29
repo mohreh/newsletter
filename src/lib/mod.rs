@@ -6,6 +6,7 @@ use sqlx::PgPool;
 pub mod configuration;
 pub mod routes;
 pub mod startup;
+pub mod telemetry;
 
 pub fn run(listener: TcpListener, pool: PgPool) -> Result<Server, std::io::Error> {
     let pool = web::Data::new(pool);
