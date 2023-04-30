@@ -5,6 +5,7 @@ use newsletter::{
     run,
     telemetry::{get_subscriber, init_subscriber},
 };
+use secrecy::ExposeSecret;
 use sqlx::PgPool;
 
 #[tokio::main]
@@ -14,7 +15,7 @@ async fn main() -> std::io::Result<()> {
 
     // refactor database stuff later
     let configuration = get_configuration().expect("Failed to read configuration.");
-    let pool = PgPool::connect(&configuration.database.connection_string())
+    let pool = PgPool::connect(&configuration.database.connection_string().expose_secret())
         .await
         .expect("Failed to connect to Postgres");
 
