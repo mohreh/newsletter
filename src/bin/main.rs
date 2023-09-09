@@ -6,7 +6,7 @@ use newsletter::{
     telemetry::{get_subscriber, init_subscriber},
 };
 use secrecy::ExposeSecret;
-use sqlx::PgPool;
+use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -15,7 +15,10 @@ async fn main() -> std::io::Result<()> {
 
     // refactor database stuff later
     let configuration = get_configuration().expect("Failed to read configuration.");
-    let pool = PgPool::connect_lazy(&configuration.database.connection_string().expose_secret())
+
+    let pool = PgPoolOptions::new()
+        .acquire_timeout(std::time::Duration::from_secs(2))
+        .connect_lazy(configuration.database.connection_string().expose_secret())
         .expect("Failed to connect to Postgres");
 
     let configuration = get_configuration().expect("Failed to read configuration.");
