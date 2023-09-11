@@ -82,7 +82,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .try_into()
         .expect("Failed to parse APP_ENVIRONMENT");
 
-    let builder = config::Config::builder()
+    let mut builder = config::Config::builder()
         .add_source(
             File::from(config_dir.join("base"))
                 .format(FileFormat::Yaml)
@@ -92,11 +92,22 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
             File::from(config_dir.join(env.as_str()))
                 .format(FileFormat::Yaml)
                 .required(true),
-        )
-        // .add_source(config::Environment::with_prefix("app").separator("__"))
-        .build()?;
+        );
+    // .add_source(config::Environment::with_prefix("APP").separator("__")) // doesn't work
 
-    builder.try_deserialize()
+    for (key, val) in std::env::vars() {
+        if key.starts_with("APP") {
+            let key = key[4..key.len()]
+                .to_lowercase()
+                .split("__")
+                .collect::<Vec<&str>>()
+                .join(".");
+
+            builder = builder.clone().set_override(key, val)?;
+        }
+    }
+
+    builder.build_cloned()?.try_deserialize()
 }
 
 pub enum Environment {
